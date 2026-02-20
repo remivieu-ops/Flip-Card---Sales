@@ -19,26 +19,28 @@
     --gray: #64748b;
   }
 
-  html { overflow-x: hidden; }
+  html, body {
+    width: 100%;
+    overflow-x: hidden;
+  }
 
   body {
     font-family: 'DM Sans', sans-serif;
     background: linear-gradient(135deg, #e8eeff 0%, #f5f0ff 50%, #fff5e8 100%);
-    padding: 0;
     margin: 0;
-    overflow-x: hidden;
+    padding: 0;
   }
 
-  /* The scaler: fixed 900px wide, scaled down to fit viewport */
+  /* Fixed 600px reference — JS will scale it down if viewport is smaller */
   #scaler {
-    width: 900px;
+    width: 600px;
     transform-origin: top left;
-    padding: 20px 20px 20px;
+    padding: 24px 20px 20px;
   }
 
   header {
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 14px;
   }
 
   .badge {
@@ -50,23 +52,23 @@
     font-weight: 700;
     letter-spacing: .1em;
     text-transform: uppercase;
-    padding: 4px 14px;
+    padding: 5px 14px;
     border-radius: 99px;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
   }
 
   header h1 {
     font-family: 'Sora', sans-serif;
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 700;
     color: var(--navy);
     line-height: 1.2;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
   }
 
   header p {
     color: var(--gray);
-    font-size: 13px;
+    font-size: 14px;
   }
 
   .tip {
@@ -76,27 +78,27 @@
     padding: 10px 14px;
     display: flex;
     align-items: flex-start;
-    gap: 8px;
-    margin-bottom: 16px;
-    font-size: 12px;
+    gap: 10px;
+    margin-bottom: 18px;
+    font-size: 13px;
     color: var(--navy);
-    line-height: 1.4;
+    line-height: 1.5;
   }
-  .tip .icon { font-size: 16px; flex-shrink: 0; }
+  .tip .icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
   .tip strong { color: var(--blue-mid); }
 
-  /* 3 cards always on one row */
+  /* Always 3 columns on one row */
   .cards {
     display: flex;
     flex-direction: row;
-    gap: 14px;
-    margin-bottom: 16px;
+    gap: 12px;
+    margin-bottom: 18px;
   }
 
   .flip-card {
     flex: 1;
     perspective: 900px;
-    height: 260px;
+    height: 280px;
     cursor: pointer;
   }
 
@@ -120,19 +122,19 @@
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    padding: 18px 16px 16px;
-    box-shadow: 0 4px 20px rgba(13,27,62,.10);
+    padding: 20px 16px 16px;
+    box-shadow: 0 4px 20px rgba(13,27,62,.12);
   }
 
   .flip-front { background: var(--white); }
 
   .question-icon {
-    width: 52px; height: 52px;
+    width: 56px; height: 56px;
     border-radius: 50%;
     background: var(--blue-light);
     display: flex; align-items: center; justify-content: center;
     font-family: 'Sora', sans-serif;
-    font-size: 24px;
+    font-size: 26px;
     font-weight: 700;
     color: var(--blue-mid);
     flex-shrink: 0;
@@ -142,7 +144,7 @@
 
   .front-question {
     font-family: 'Sora', sans-serif;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     color: var(--navy);
     text-align: center;
@@ -159,9 +161,9 @@
     color: var(--white);
     border: none;
     border-radius: 10px;
-    padding: 10px 14px;
+    padding: 11px 14px;
     font-family: 'Sora', sans-serif;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     width: 100%;
@@ -176,17 +178,17 @@
   }
 
   .answer-icon {
-    width: 52px; height: 52px;
+    width: 56px; height: 56px;
     border-radius: 50%;
     background: rgba(255,255,255,.12);
     display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
+    font-size: 24px;
     color: white;
     flex-shrink: 0;
   }
 
   .back-answer {
-    font-size: 12px;
+    font-size: 13px;
     color: rgba(255,255,255,.9);
     text-align: center;
     line-height: 1.6;
@@ -206,9 +208,9 @@
     color: var(--white);
     border: 1px solid rgba(255,255,255,.25);
     border-radius: 10px;
-    padding: 10px 14px;
+    padding: 11px 14px;
     font-family: 'Sora', sans-serif;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     width: 100%;
@@ -237,7 +239,7 @@
   }
 
   .progress-bar { text-align: center; }
-  .progress-label { font-size: 12px; color: var(--gray); margin-bottom: 6px; }
+  .progress-label { font-size: 13px; color: var(--gray); margin-bottom: 8px; }
   .bar-track { background: #e2e8f0; border-radius: 99px; height: 6px; overflow: hidden; max-width: 260px; margin: 0 auto; }
   .bar-fill { height: 100%; background: linear-gradient(90deg, var(--blue-mid), #60a5fa); border-radius: 99px; transition: width .5s ease; }
 </style>
@@ -319,15 +321,16 @@
 </div>
 
 <script>
-  // Scale the 900px layout to fit the actual viewport width
+  const DESIGN_WIDTH = 600;
+
   function rescale() {
     const scaler = document.getElementById('scaler');
     const vw = window.innerWidth;
-    const scale = Math.min(1, vw / 900);
+    const scale = Math.min(1, vw / DESIGN_WIDTH);
     scaler.style.transform = `scale(${scale})`;
-    // Adjust body height to avoid scrollbar from unscaled ghost space
-    document.body.style.height = (scaler.offsetHeight * scale) + 'px';
+    document.body.style.height = Math.ceil(scaler.offsetHeight * scale) + 'px';
   }
+
   rescale();
   window.addEventListener('resize', rescale);
 
